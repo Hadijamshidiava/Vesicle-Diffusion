@@ -10,6 +10,7 @@ public:
      * Represents a single vesicle with a center, samples, and diffusion properties.
      */
     Eigen::Vector2d center;             // 2D coordinate of the vesicle center.
+    Eigen::Vector2d position;             // 2D coordinate of the vesicle center.
     Eigen::MatrixXd samples;             // Coordinates of sampled points on the vesicle perimeter.
     double diffusion_coeff;              // Diffusion coefficient (D).
     int nSample;                         // Number of perimeter samples.
@@ -17,10 +18,10 @@ public:
     double r;                            // Vesicle radius.
     std::vector<int> overlapped;         // List of overlapping triangles.
 
-    Vesicle(const Eigen::Vector2d& center, const Eigen::MatrixXd& samples,
+    Vesicle(const Eigen::Vector2d& center, const Eigen::Vector2d& position, const Eigen::MatrixXd& samples,
             double diffusion_coeff, int nSample,
             double dt, double r)
-        : center(center), samples(samples),
+        : center(center), position(position), samples(samples),
         diffusion_coeff(diffusion_coeff), nSample(nSample),
         dt(dt), r(r), overlapped() {}
 };
@@ -39,7 +40,7 @@ public:
                                                     const Eigen::MatrixXd& samples, Cell& cell) {
 
         std::vector<int> newOverlapped; // Store indices of overlapped triangles
-        Eigen::MatrixXd diff = cell.centers - center;
+        Eigen::MatrixXd diff = cell.centers.rowwise() - center.transpose();
         Eigen::VectorXd distances = diff.rowwise().norm(); // Calculate the norm for each triangle center
 
         // Get indices of triangles within a distance of 3*r
@@ -54,24 +55,24 @@ public:
             return { false, oldOverlapped }; // No triangles within range
         }
 
-        // for (int index : triangleIndexes) {
-        //     bool isOc = cell.is_occupied(center, r, samples, index);
-        //     if (cell.triangles[index].occupied && isOc &&
-        //         std::find(oldOverlapped.begin(), oldOverlapped.end(), index) == oldOverlapped.end()) {
-        //         return { false, oldOverlapped }; // Overlapping; not valid
-        //     }
-        //     else if (isOc) {
-        //         newOverlapped.push_back(index); // Add to new overlaps
-        //     }
-        // }
+        for (int index : triangleIndexes) {
+            bool isOc = cell.is_occupied(center, r, samples, index);
+            if (cell.triangles[index].occupied && isOc &&
+                std::find(oldOverlapped.begin(), oldOverlapped.end(), index) == oldOverlapped.end()) {
+                return { false, oldOverlapped }; // Overlapping; not valid
+            }
+            else if (isOc) {
+                newOverlapped.push_back(index); // Add to new overlaps
+            }
+        }
 
-        // // Update occupied status for old overlapped triangles
-        // for (int index : oldOverlapped) {
-        //     cell.triangles[index].occupied = false; // Mark as not occupied
-        // }
-        // for (int index : newOverlapped) {
-        //     cell.triangles[index].occupied = true; // Mark as occupied
-        // }
+        // Update occupied status for old overlapped triangles
+        for (int index : oldOverlapped) {
+            cell.triangles[index].occupied = false; // Mark as not occupied
+        }
+        for (int index : newOverlapped) {
+            cell.triangles[index].occupied = true; // Mark as occupied
+        }
 
         return { true, newOverlapped }; // Valid position
     }
@@ -97,6 +98,8 @@ public:
         std::uniform_int_distribution<> y_dis(CIRCLE_RADIUS, cell.y_max() - 2 *CIRCLE_RADIUS);
 
         Eigen::Vector2d center(x_dis(eng), y_dis(eng)); // Random center coordinates
+        Eigen::Vector2d position(center.x() - CIRCLE_RADIUS, center.y() - CIRCLE_RADIUS);
+        // Eigen::Vector2d position(center.x(), center.y());
 
         // Generate samples on the perimeter of the vesicle
         Eigen::MatrixXd samples(2, N_SAMPLES);
@@ -107,7 +110,7 @@ public:
         }
 
         // Create a new vesicle
-        Vesicle vesicle(center, samples, diffusion_coeff, N_SAMPLES, dt, CIRCLE_RADIUS);
+        Vesicle vesicle(center, position, samples, diffusion_coeff, N_SAMPLES, dt, CIRCLE_RADIUS);
 
         // vesicles.push_back(vesicle);
 
@@ -139,6 +142,7 @@ public:
         for (size_t index = 0; index < vesicles.size(); ++index) {
             Vesicle& vesicle = vesicles[index]; // Reference to current vesicle
             Eigen::Vector2d old_center = vesicle.center;  // Save old center
+            Eigen::Vector2d old_position = vesicle.position;  // Save old position
             Eigen::MatrixXd old_samples = vesicle.samples; // Save old samples
             std::vector<int> old_overlap = vesicle.overlapped; // Save old overlaps
 
@@ -150,6 +154,7 @@ public:
 
             // Apply displacement
             Eigen::Vector2d new_center = old_center + displacement;
+            Eigen::Vector2d new_position = old_position + displacement;
             Eigen::MatrixXd new_samples = old_samples.colwise() + displacement; // Update samples
 
             // Validate and update
@@ -158,6 +163,7 @@ public:
                 vesicle.center = new_center;
                 vesicle.samples = new_samples;
                 vesicle.overlapped = new_overlap;
+                vesicle.position = new_position;
             }
 
             // vesicle.center = new_center;

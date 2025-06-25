@@ -10,7 +10,7 @@ const int GRID_SIZE_X = 10;
 const int GRID_SIZE_Y = 10;
 const double L = 10.0;
 const double CIRCLE_RADIUS = 50.0;
-const double DIFFUSION_COEFF = 5.0;
+const double DIFFUSION_COEFF = 8.0;
 const double DT = 0.1;
 const int N_SAMPLES = 8;
 const int N_VESICLES = 4;
@@ -38,9 +38,15 @@ void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)
             triangle[1].position = sf::Vector2f(cell->triangles[index].vertices(0, 1), cell->triangles[index].vertices(1, 1));
             triangle[2].position = sf::Vector2f(cell->triangles[index].vertices(0, 2), cell->triangles[index].vertices(1, 2));
 
-            triangle[0].color = sf::Color::Blue;
-            triangle[1].color = sf::Color::Green;
-            triangle[2].color = sf::Color::Green;
+            if(cell->triangles[index].occupied){
+                triangle[0].color = sf::Color::Green;
+                triangle[1].color = sf::Color::Green;
+                triangle[2].color = sf::Color::Green;
+            }else{
+                triangle[0].color = sf::Color::Blue;
+                triangle[1].color = sf::Color::Blue;
+                triangle[2].color = sf::Color::Blue;
+            }
 
             window->draw(triangle);
 
@@ -49,8 +55,8 @@ void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)
 
         for (int index = 0; index < vesicles->vesicles.size(); index++){
             sf::CircleShape vesicle(vesicles->vesicles[index].r);
-            Eigen::Vector2d center = vesicles->vesicles[index].center;
-            sf::Vector2f sfmlPosition(center.x(), center.y());
+            Eigen::Vector2d position = vesicles->vesicles[index].position;
+            sf::Vector2f sfmlPosition(position.x(), position.y());
             vesicle.move(sfmlPosition);
             window->draw(vesicle);
         }

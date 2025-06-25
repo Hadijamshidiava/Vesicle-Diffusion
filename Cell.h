@@ -20,9 +20,9 @@ class Cell {
 public:
     std::vector<Eigen::Vector2d> points;
     std::vector<Triangle> triangles;
-    std::vector<Eigen::Vector2d> centers;
+    Eigen::MatrixXd centers;
 
-    Cell(int grid_size_y, int grid_size_x, double L) {
+    Cell(int grid_size_y, int grid_size_x, double L) :centers(0, 2) {
         points = generate_grid(grid_size_y, grid_size_x, L);
         generate_mesh(grid_size_y, grid_size_x);
     }
@@ -79,26 +79,28 @@ public:
         }
 
         triangles.emplace_back(vertices, normals, false);
-        centers.push_back(center / 3.0); // Average center
+        int currentRows = centers.rows();
+        centers.conservativeResize(currentRows + 1, Eigen::NoChange); // Resize to accommodate one more center
+        centers.row(currentRows) = center/3.0; // Add the new center
     }
 
-    // bool is_occupied(const Eigen::Vector2d& center, double r, const Eigen::Matrix<double, Eigen::Dynamic, 2>& samples, int triIndex) {
-    //     const auto& triangle = triangles[triIndex];
-    //     Eigen::MatrixXd s = samples.replicate(1, 1).transpose(); // Shape (N_samples, 2)
-    //     Eigen::MatrixXd v = triangle.vertices.transpose();        // Shape (3, 2)
+    bool is_occupied(const Eigen::Vector2d& center, double r,
+                     const Eigen::MatrixXd& samples, int triIndex) {
 
-    //     // Compute directions and check if inside
-    //     Eigen::MatrixXd diff = s.colwise() - v; // shape: (N_samples, 3, 2)
-    //     Eigen::MatrixXd dot = (diff.array() * triangle.normals.transpose().array()).rowwise().sum(); // shape: (N_samples, 3)
-    //     Eigen::Array<bool, Eigen::Dynamic, 1> inside = (dot.array() >= 0).colwise().all();
+        const auto& triangle = triangles[triIndex];
 
-    //     // Check distance to center
-    //     Eigen::MatrixXd diff_c = v.colwise() - center.transpose().row(0); // shape: (3, 2)
-    //     Eigen::VectorXd distances = diff_c.colwise().norm(); // distances to the center
-    //     Eigen::Array<bool, Eigen::Dynamic, 1> trianglesInside = (distances.array() <= r).matrix();
+        // Check if any vertex of the triangle is inside the circle
+        for (int j = 0; j < 3; ++j) {
+            Eigen::Vector2d vertex = triangle.vertices.col(j);
+            double dist = (vertex - center).norm();
+            if (dist <= r) {
+                return true; // Found a vertex inside the circle
+            }
+        }
 
-    //     return inside.any() || trianglesInside.any();
-    // }
+        return false; // No vertices are inside the circle
+    }
+
 
     double x_max() const {
         // Ensure points is not empty
