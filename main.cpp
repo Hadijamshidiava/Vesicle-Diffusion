@@ -3,14 +3,15 @@
 #include <thread>
 #include <chrono>
 #include <random>
+#include <stdexcept>
 #include "Cell.h"
 #include "Vesicle.h"
 
-const int GRID_SIZE_X = 10;
-const int GRID_SIZE_Y = 10;
-const double L = 10.0;
+const int GRID_SIZE_X = 20;
+const int GRID_SIZE_Y = 20;
+const double L = 2.0;
 const double CIRCLE_RADIUS = 50.0;
-const double DIFFUSION_COEFF = 8.0;
+const double DIFFUSION_COEFF = 250.0;
 const double DT = 0.1;
 const int N_SAMPLES = 8;
 const int N_VESICLES = 4;
@@ -58,6 +59,9 @@ void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)
             Eigen::Vector2d position = vesicles->vesicles[index].position;
             sf::Vector2f sfmlPosition(position.x(), position.y());
             vesicle.move(sfmlPosition);
+            vesicle.setFillColor(sf::Color(255, 0, 0, 0));
+            vesicle.setOutlineColor(sf::Color::Black);
+            vesicle.setOutlineThickness(2); // Thickness of the outline
             window->draw(vesicle);
         }
 
@@ -69,12 +73,12 @@ void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)
 int main()
 {
     // create a triangle strip
-    int grid_size_y = 12;
-    int grid_size_x = 15;
-    double L = 80.0;
+    int grid_size_y = 20;
+    int grid_size_x = 30;
+    double L = 20.0;
 
     // create the window (remember: it's safer to create it in the main thread due to OS limitations)
-    sf::RenderWindow window(sf::VideoMode({1200, 800}), "OpenGL");
+    sf::RenderWindow window(sf::VideoMode({1600, 900}), "OpenGL");
 
     // deactivate its OpenGL context
     window.setActive(false);
@@ -85,6 +89,7 @@ int main()
 
     // Seed initial vesicles
     for (int i = 0; i < N_VESICLES; ++i) {
+
         vesicles.create(CIRCLE_RADIUS, N_SAMPLES, DIFFUSION_COEFF, DT, cell);
     }
 
@@ -94,10 +99,10 @@ int main()
     // the event/logic/whatever loop
     while (window.isOpen())
     {
-        // std::this_thread::sleep_for(std::chrono::seconds(2));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(500));
         vesicles.diffuse(cell);
 
     }
 
     thread.join();
-}
+};

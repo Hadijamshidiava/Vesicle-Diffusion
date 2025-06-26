@@ -45,18 +45,29 @@ public:
 
         // Get indices of triangles within a distance of 3*r
         std::vector<int> triangleIndexes;
+        Eigen::VectorXd moveDist(2); // Create a vector of size 1
+        moveDist.setZero(); // Initialize moveDist to zero
+
         for (int i = 0; i < distances.size(); i++) {
             if (distances(i) <= 3 * r) {
                 triangleIndexes.push_back(i);
             }
+            if (r <= distances(i) && distances(i) <= 2 * r) {
+                moveDist += diff.row(i); // Accumulate into the first element
+            }
         }
+
+        if(is_outside(moveDist)){
+            return { false, oldOverlapped };
+        }
+
 
         if (triangleIndexes.empty()) {
             return { false, oldOverlapped }; // No triangles within range
         }
 
         for (int index : triangleIndexes) {
-            bool isOc = cell.is_occupied(center, r, samples, index);
+            bool isOc = cell.is_occupied(center, r, distances, index);
             if (cell.triangles[index].occupied && isOc &&
                 std::find(oldOverlapped.begin(), oldOverlapped.end(), index) == oldOverlapped.end()) {
                 return { false, oldOverlapped }; // Overlapping; not valid
@@ -165,12 +176,12 @@ public:
                 vesicle.overlapped = new_overlap;
                 vesicle.position = new_position;
             }
+        }
+    }
 
-            // vesicle.center = new_center;
-            // vesicle.samples = new_samples;
-            // vesicle.overlapped = old_overlap;
-
-
+    bool is_outside(Eigen::VectorXd& distances){
+        if (distances.norm() > 100){
+            return true;
         }
     }
 };

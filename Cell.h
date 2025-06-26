@@ -85,9 +85,13 @@ public:
     }
 
     bool is_occupied(const Eigen::Vector2d& center, double r,
-                     const Eigen::MatrixXd& samples, int triIndex) {
+                     const Eigen::MatrixXd& distances, int triIndex) {
 
         const auto& triangle = triangles[triIndex];
+
+        if (distances(triIndex) <= r){
+            return true;
+        }
 
         // Check if any vertex of the triangle is inside the circle
         for (int j = 0; j < 3; ++j) {
