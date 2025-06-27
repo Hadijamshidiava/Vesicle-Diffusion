@@ -1,19 +1,19 @@
-### Vesicle Diffusion Prototype
+## Vesicle Diffusion Prototype
 
 This project is a fast and modular prototype for simulating vesicle diffusion within a 2D triangular mesh — a simplified abstraction of vesicle transport along biological membranes.
 
 The simulation was developed in response to a scientific paper shared as part of an interview preparation, aiming to demonstrate understanding of spatial diffusion, geometric sampling, and efficient real-time computation.
 
-### Dependencies & Installation
+## Dependencies & Installation
 To build and run the project, make sure the following libraries are installed:
 
-## Required Libraries
+### Required Libraries
 
 SFML (Simple and Fast Multimedia Library) – for real-time visualization
 
 Eigen 3 – for linear algebra and matrix computations
 
-## Install on Linux (Example)
+### Install on Linux (Example)
 
 ```bash
 
@@ -27,7 +27,7 @@ sudo apt-get install libsfml-dev
 
 Alternatively, you can build SFML manually and point CMake to the custom install path (as done in the included CMakeLists.txt).
 
-### Key Features
+## Key Features
 
 - Vesicles modeled as circular particles with membrane sample points
 - Triangle occupancy detection using a fully vectorized 2D side-test
@@ -36,7 +36,7 @@ Alternatively, you can build SFML manually and point CMake to the custom install
 - Real-time interactive visualization using
 - Modular design, easily extendable to tetrahedral 3D meshes and reaction models
 
-### Reference
+## Reference
 
 This prototype was inspired by:
 
