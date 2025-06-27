@@ -4,6 +4,29 @@ This project is a fast and modular prototype for simulating vesicle diffusion wi
 
 The simulation was developed in response to a scientific paper shared as part of an interview preparation, aiming to demonstrate understanding of spatial diffusion, geometric sampling, and efficient real-time computation.
 
+### Dependencies & Installation
+To build and run the project, make sure the following libraries are installed:
+
+## Required Libraries
+
+SFML (Simple and Fast Multimedia Library) – for real-time visualization
+
+Eigen 3 – for linear algebra and matrix computations
+
+## Install on Linux (Example)
+
+```bash
+
+# Install Eigen (if not already installed)
+sudo apt-get install libeigen3-dev
+
+# Install SFML (use package or manually)
+sudo apt-get install libsfml-dev
+
+```
+
+Alternatively, you can build SFML manually and point CMake to the custom install path (as done in the included CMakeLists.txt).
+
 ### Key Features
 
 - Vesicles modeled as circular particles with membrane sample points
