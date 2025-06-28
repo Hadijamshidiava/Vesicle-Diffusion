@@ -53,7 +53,10 @@ public:
                 triangleIndexes.push_back(i);
             }
             if (r <= distances(i) && distances(i) <= 2 * r) {
-                moveDist += diff.row(i); // Accumulate into the first element
+                moveDist += diff.row(i);  // Accumulate vectors from the vesicle center to nearby triangle centers.
+                    // If the resulting vector (moveDist) has a small magnitude,
+                    // it suggests the triangles are evenly distributed around the vesicle,
+                    // implying the vesicle is well-contained within the cell boundary.
             }
         }
 
@@ -100,6 +103,7 @@ public:
          *     diffusion_coeff (double): Diffusion coefficient.
          *     dt (double): Time step.
          *     cell (Cell): The simulation mesh.
+         *     iteration: Maximum number of attempts to create the vesicle before giving up.
          */
 
         if(iteration == 0)
@@ -115,8 +119,13 @@ public:
         Eigen::Vector2d position(center.x() - CIRCLE_RADIUS, center.y() - CIRCLE_RADIUS);
         // Eigen::Vector2d position(center.x(), center.y());
 
-        // Generate samples on the perimeter of the vesicle
+        // Generate samples on the perimeter of the vesicle (I do not use them in the current overlap method so I leave the array empty).
         Eigen::MatrixXd samples(2, N_SAMPLES);
+
+        // --[ Sample generation for future use ]--
+        // These lines generate evenly spaced sample points along the vesicle perimeter.
+        // Currently unused, but kept here for possible reactivation in future feature development.
+        //
         // Eigen::VectorXd angles = Eigen::VectorXd::LinSpaced(N_SAMPLES, 0, 2 * M_PI);
         // for (int i = 0; i < N_SAMPLES; ++i) {
         //     samples(0, i) = center(0) + CIRCLE_RADIUS * cos(angles(i)); // x-coordinates
@@ -183,6 +192,13 @@ public:
     }
 
     bool is_outside(Eigen::VectorXd& distances){
+        /**
+         * Checks whether the vesicle is likely outside the cell boundary
+         * based on the accumulated vector from surrounding triangle centers.
+         *
+         * @param vector_sum The accumulated vector from vesicle to nearby triangles.
+         * @return True if the vesicle appears to be near the boundary or outside.
+         */
         if (distances.norm() > 50){
             return true;
         }

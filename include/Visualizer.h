@@ -16,7 +16,7 @@ const double L = 20.0;
 const double CIRCLE_RADIUS = 50.0;
 const double DIFFUSION_COEFF = 500.0;
 const double DT = 0.3;
-const int N_SAMPLES = 8;
+const int N_SAMPLES = 2;
 const int N_VESICLES = 10;
 
 void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)
