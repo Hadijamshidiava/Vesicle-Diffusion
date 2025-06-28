@@ -88,7 +88,7 @@ public:
         return { true, newOverlapped }; // Valid position
     }
 
-    void create(double CIRCLE_RADIUS, int N_SAMPLES, double diffusion_coeff, double dt, Cell& cell) {
+    void create(double CIRCLE_RADIUS, int N_SAMPLES, double diffusion_coeff, double dt, Cell& cell, int iteration) {
         /**
          * Attempts to create a new vesicle at a random valid position.
          * If the generated position is invalid (due to overlap), it retries recursively.
@@ -102,6 +102,9 @@ public:
          *     cell (Cell): The simulation mesh.
          */
 
+        if(iteration == 0)
+            return;
+
         // Generate a random center within specified bounds
         std::random_device rd; // Obtain a random number from hardware
         std::mt19937 eng(rd()); // Seed the generator
@@ -114,11 +117,11 @@ public:
 
         // Generate samples on the perimeter of the vesicle
         Eigen::MatrixXd samples(2, N_SAMPLES);
-        Eigen::VectorXd angles = Eigen::VectorXd::LinSpaced(N_SAMPLES, 0, 2 * M_PI);
-        for (int i = 0; i < N_SAMPLES; ++i) {
-            samples(0, i) = center(0) + CIRCLE_RADIUS * cos(angles(i)); // x-coordinates
-            samples(1, i) = center(1) + CIRCLE_RADIUS * sin(angles(i)); // y-coordinates
-        }
+        // Eigen::VectorXd angles = Eigen::VectorXd::LinSpaced(N_SAMPLES, 0, 2 * M_PI);
+        // for (int i = 0; i < N_SAMPLES; ++i) {
+        //     samples(0, i) = center(0) + CIRCLE_RADIUS * cos(angles(i)); // x-coordinates
+        //     samples(1, i) = center(1) + CIRCLE_RADIUS * sin(angles(i)); // y-coordinates
+        // }
 
         // Create a new vesicle
         Vesicle vesicle(center, position, samples, diffusion_coeff, N_SAMPLES, dt, CIRCLE_RADIUS);
@@ -132,7 +135,7 @@ public:
             vesicles.push_back(vesicle); // Add vesicle to the list
         } else {
             // Recursive retry
-            create(CIRCLE_RADIUS, N_SAMPLES, diffusion_coeff, dt, cell);
+            create(CIRCLE_RADIUS, N_SAMPLES, diffusion_coeff, dt, cell, iteration-1);
         }
     }
 
@@ -180,9 +183,10 @@ public:
     }
 
     bool is_outside(Eigen::VectorXd& distances){
-        if (distances.norm() > 100){
+        if (distances.norm() > 50){
             return true;
         }
+        return false;
     }
 };
 #endif // VESICLE_H

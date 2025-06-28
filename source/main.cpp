@@ -16,13 +16,13 @@ int main()
     // Seed initial vesicles
     for (int i = 0; i < N_VESICLES; ++i) {
 
-        vesicles.create(CIRCLE_RADIUS, N_SAMPLES, DIFFUSION_COEFF, DT, cell);
+        vesicles.create(CIRCLE_RADIUS, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
     }
 
     // launch the rendering thread
     std::thread thread(&renderingThread, &window, &vesicles, &cell);
 
-    // the event/logic/whatever loop
+
     while (window.isOpen())
     {
         // std::this_thread::sleep_for(std::chrono::milliseconds(500));
