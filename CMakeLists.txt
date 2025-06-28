@@ -5,27 +5,19 @@ project(VesicleDiffusion LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB SOURCES "Source Files/*.cpp")
-file(GLOB HEADERS "Header Files/*.h")
+file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/source/*.cpp")
+file(GLOB HEADERS "${CMAKE_SOURCE_DIR}/include/*.h")
 
-# Create the executable
 add_executable(VesicleDiffusion ${SOURCES} ${HEADERS})
 
-include_directories(/home/hadi/development/SFML-3.0.0-linux-gcc-64-bit/SFML-3.0.0/include)
-
-find_library(SFML_GRAPHICS_LIBRARY sfml-graphics PATHS /home/hadi/development/SFML-3.0.0-linux-gcc-64-bit/SFML-3.0.0/lib)
-find_library(SFML_WINDOW_LIBRARY sfml-window PATHS /home/hadi/development/SFML-3.0.0-linux-gcc-64-bit/SFML-3.0.0/lib)
-find_library(SFML_SYSTEM_LIBRARY sfml-system PATHS /home/hadi/development/SFML-3.0.0-linux-gcc-64-bit/SFML-3.0.0/lib)
+# Use system-installed SFML and Eigen
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
-include(GNUInstallDirs)
-install(TARGETS VesicleDiffusion
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+include_directories("${CMAKE_SOURCE_DIR}/include")
 
 target_link_libraries(VesicleDiffusion
-    ${SFML_GRAPHICS_LIBRARY}
-    ${SFML_WINDOW_LIBRARY}
-    ${SFML_SYSTEM_LIBRARY}
+    sfml-graphics
+    sfml-window
+    sfml-system
     Eigen3::Eigen)

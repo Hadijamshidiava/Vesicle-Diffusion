@@ -6,7 +6,7 @@
 #include <Eigen/Dense>
 #include <cmath>
 
-class Triangle {
+struct Triangle {
 public:
     Eigen::Matrix<double, 2, 3> vertices; // 3 vertices in 2D space
     Eigen::Matrix<double, 2, 3> normals;  // Outward normals for each vertex

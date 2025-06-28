@@ -4,26 +4,26 @@
 #include <Eigen/Dense>
 
 
-class Vesicle {
-public:
-    /**
-     * Represents a single vesicle with a center, samples, and diffusion properties.
-     */
-    Eigen::Vector2d center;             // 2D coordinate of the vesicle center.
-    Eigen::Vector2d position;             // 2D coordinate of the vesicle center.
-    Eigen::MatrixXd samples;             // Coordinates of sampled points on the vesicle perimeter.
-    double diffusion_coeff;              // Diffusion coefficient (D).
-    int nSample;                         // Number of perimeter samples.
-    double dt;                           // Time step used for diffusion.
-    double r;                            // Vesicle radius.
-    std::vector<int> overlapped;         // List of overlapping triangles.
+struct Vesicle {
+    public:
+        /**
+         * Represents a single vesicle with a center, samples, and diffusion properties.
+         */
+        Eigen::Vector2d center;             // 2D coordinate of the vesicle center.
+        Eigen::Vector2d position;             // 2D coordinate of the vesicle center.
+        Eigen::MatrixXd samples;             // Coordinates of sampled points on the vesicle perimeter.
+        double diffusion_coeff;              // Diffusion coefficient (D).
+        int nSample;                         // Number of perimeter samples.
+        double dt;                           // Time step used for diffusion.
+        double r;                            // Vesicle radius.
+        std::vector<int> overlapped;         // List of overlapping triangles.
 
-    Vesicle(const Eigen::Vector2d& center, const Eigen::Vector2d& position, const Eigen::MatrixXd& samples,
-            double diffusion_coeff, int nSample,
-            double dt, double r)
-        : center(center), position(position), samples(samples),
-        diffusion_coeff(diffusion_coeff), nSample(nSample),
-        dt(dt), r(r), overlapped() {}
+        Vesicle(const Eigen::Vector2d& center, const Eigen::Vector2d& position, const Eigen::MatrixXd& samples,
+                double diffusion_coeff, int nSample,
+                double dt, double r)
+            : center(center), position(position), samples(samples),
+            diffusion_coeff(diffusion_coeff), nSample(nSample),
+            dt(dt), r(r), overlapped() {}
 };
 
 class Vesicles {

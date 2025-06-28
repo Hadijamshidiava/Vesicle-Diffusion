@@ -8,7 +8,7 @@
 #include "Vesicle.h"
 
 const int GRID_SIZE_X = 20;
-const int GRID_SIZE_Y = 20;
+const int GRID_SIZE_Y = 30;
 const double L = 2.0;
 const double CIRCLE_RADIUS = 50.0;
 const double DIFFUSION_COEFF = 250.0;
@@ -21,14 +21,13 @@ void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)
     // activate the window's context
     window->setActive(true);
     sf::VertexArray triangle(sf::PrimitiveType::Triangles, 3);
-
+    sf::Event event;
     // the rendering loop
     while (window->isOpen())
     {
-
-        while (const std::optional event = window->pollEvent())
+        while (window->pollEvent(event))
         {
-            if (event->is<sf::Event::Closed>())
+            if (event.type == sf::Event::Closed)
                 window->close();
         }
 
@@ -72,10 +71,6 @@ void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)
 
 int main()
 {
-    // create a triangle strip
-    int grid_size_y = 20;
-    int grid_size_x = 30;
-    double L = 20.0;
 
     // create the window (remember: it's safer to create it in the main thread due to OS limitations)
     sf::RenderWindow window(sf::VideoMode({1600, 900}), "OpenGL");
@@ -83,7 +78,7 @@ int main()
     // deactivate its OpenGL context
     window.setActive(false);
 
-    Cell cell(grid_size_y, grid_size_x, L);
+    Cell cell(GRID_SIZE_Y, GRID_SIZE_X, L);
 
     Vesicles vesicles;
 
