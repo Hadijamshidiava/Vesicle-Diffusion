@@ -9,7 +9,7 @@
 
 const int GRID_SIZE_X = 20;
 const int GRID_SIZE_Y = 30;
-const double L = 2.0;
+const double L = 20.0;
 const double CIRCLE_RADIUS = 50.0;
 const double DIFFUSION_COEFF = 250.0;
 const double DT = 0.1;

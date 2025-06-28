@@ -105,8 +105,8 @@ public:
         // Generate a random center within specified bounds
         std::random_device rd; // Obtain a random number from hardware
         std::mt19937 eng(rd()); // Seed the generator
-        std::uniform_int_distribution<> x_dis(2 * CIRCLE_RADIUS, cell.x_max() - 2 * CIRCLE_RADIUS);
-        std::uniform_int_distribution<> y_dis(CIRCLE_RADIUS, cell.y_max() - 2 *CIRCLE_RADIUS);
+        std::uniform_int_distribution<> x_dis(CIRCLE_RADIUS, cell.x_max() - CIRCLE_RADIUS);
+        std::uniform_int_distribution<> y_dis(CIRCLE_RADIUS, cell.y_max() - CIRCLE_RADIUS);
 
         Eigen::Vector2d center(x_dis(eng), y_dis(eng)); // Random center coordinates
         Eigen::Vector2d position(center.x() - CIRCLE_RADIUS, center.y() - CIRCLE_RADIUS);
