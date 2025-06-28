@@ -25,7 +25,7 @@ sudo apt-get install libsfml-dev
 
 ```
 
-Alternatively, you can build SFML manually and point CMake to the custom install path (as done in the included CMakeLists.txt).
+Alternatively, you can build SFML manually and point CMake to the custom install path.
 
 ## Key Features
 
