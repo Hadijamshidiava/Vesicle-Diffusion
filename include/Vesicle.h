@@ -196,7 +196,7 @@ public:
          * Checks whether the vesicle is likely outside the cell boundary
          * based on the accumulated vector from surrounding triangle centers.
          *
-         * @param vector_sum The accumulated vector from vesicle to nearby triangles.
+         * distances: The accumulated vector from vesicle to nearby triangles.
          * @return True if the vesicle appears to be near the boundary or outside.
          */
         if (distances.norm() > 50){
