@@ -4,7 +4,7 @@ int main()
 {
 
     // create the window (remember: it's safer to create it in the main thread due to OS limitations)
-    sf::RenderWindow window(sf::VideoMode({1600, 900}), "OpenGL");
+    sf::RenderWindow window(sf::VideoMode({700, 600}), "OpenGL");
 
     // deactivate its OpenGL context
     window.setActive(false);
@@ -14,10 +14,17 @@ int main()
     Vesicles vesicles;
 
     // Seed initial vesicles
-    for (int i = 0; i < N_VESICLES; ++i) {
+    // for (int i = 0; i < N_VESICLES; ++i) {
 
-        vesicles.create(CIRCLE_RADIUS, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
-    }
+    //     vesicles.create(CIRCLE_RADIUS, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    // }
+
+    vesicles.create(20, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(50, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(50, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(20, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(40, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(30, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
 
     // launch the rendering thread
     std::thread thread(&renderingThread, &window, &vesicles, &cell);

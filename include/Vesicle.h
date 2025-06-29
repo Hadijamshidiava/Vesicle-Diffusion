@@ -66,11 +66,11 @@ public:
 
 
         if (triangleIndexes.empty()) {
-            return { false, oldOverlapped }; // No triangles within range
+            return { true, oldOverlapped }; // No triangles within range
         }
 
         for (int index : triangleIndexes) {
-            bool isOc = cell.is_occupied(center, r, distances, index);
+            bool isOc = cell.is_occupied(center, r, distances, index, samples);
             if (cell.triangles[index].occupied && isOc &&
                 std::find(oldOverlapped.begin(), oldOverlapped.end(), index) == oldOverlapped.end()) {
                 return { false, oldOverlapped }; // Overlapping; not valid
@@ -122,15 +122,12 @@ public:
         // Generate samples on the perimeter of the vesicle (I do not use them in the current overlap method so I leave the array empty).
         Eigen::MatrixXd samples(2, N_SAMPLES);
 
-        // --[ Sample generation for future use ]--
-        // These lines generate evenly spaced sample points along the vesicle perimeter.
-        // Currently unused, but kept here for possible reactivation in future feature development.
-        //
-        // Eigen::VectorXd angles = Eigen::VectorXd::LinSpaced(N_SAMPLES, 0, 2 * M_PI);
-        // for (int i = 0; i < N_SAMPLES; ++i) {
-        //     samples(0, i) = center(0) + CIRCLE_RADIUS * cos(angles(i)); // x-coordinates
-        //     samples(1, i) = center(1) + CIRCLE_RADIUS * sin(angles(i)); // y-coordinates
-        // }
+
+        Eigen::VectorXd angles = Eigen::VectorXd::LinSpaced(N_SAMPLES, 0, 2 * M_PI);
+        for (int i = 0; i < N_SAMPLES; ++i) {
+            samples(0, i) = center(0) + CIRCLE_RADIUS * cos(angles(i)); // x-coordinates
+            samples(1, i) = center(1) + CIRCLE_RADIUS * sin(angles(i)); // y-coordinates
+        }
 
         // Create a new vesicle
         Vesicle vesicle(center, position, samples, diffusion_coeff, N_SAMPLES, dt, CIRCLE_RADIUS);
@@ -199,7 +196,7 @@ public:
          * distances: The accumulated vector from vesicle to nearby triangles.
          * @return True if the vesicle appears to be near the boundary or outside.
          */
-        if (distances.norm() > 50){
+        if (distances.norm() > 100){
             return true;
         }
         return false;

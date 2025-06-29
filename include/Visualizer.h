@@ -13,10 +13,10 @@
 const int GRID_SIZE_X = 30;
 const int GRID_SIZE_Y = 30;
 const double L = 20.0;
-const double CIRCLE_RADIUS = 50.0;
-const double DIFFUSION_COEFF = 500.0;
-const double DT = 0.3;
-const int N_SAMPLES = 2;
+const double CIRCLE_RADIUS = 2.0;
+const double DIFFUSION_COEFF = 100.0;
+const double DT = 0.5;
+const int N_SAMPLES = 8;
 const int N_VESICLES = 10;
 
 void renderingThread(sf::RenderWindow* window, Vesicles* vesicles, Cell* cell)

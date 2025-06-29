@@ -31,8 +31,8 @@ public:
         std::vector<Eigen::Vector2d> grid_points;
         for (int j = 0; j < rows; ++j) {
             for (int i = 0; i < cols; ++i) {
-                double x = i * L + (j % 2) * (L / 2);
-                double y = j * (std::sqrt(3) / 2) * L;
+                double x = i * L + (j % 2) * (L / 2) + 50;
+                double y = j * (std::sqrt(3) / 2) * L + 50;
                 grid_points.emplace_back(x, y);
             }
         }
@@ -85,13 +85,34 @@ public:
     }
 
     bool is_occupied(const Eigen::Vector2d& center, double r,
-                     const Eigen::MatrixXd& distances, int triIndex) {
+                     const Eigen::MatrixXd& distances, int triIndex, const Eigen::MatrixXd& samples) {
 
-        const auto& triangle = triangles[triIndex];
+        const Triangle& triangle = triangles[triIndex];
 
         if (distances(triIndex) <= r){
             return true;
         }
+
+        // samples shape: (2, N_samples)
+        const int N = samples.cols();
+        Eigen::Array<bool, Eigen::Dynamic, 1> inside_flags(N);
+        inside_flags.setConstant(true);  // assume inside, then invalidate
+
+        // Side-test logic (check for each edge)
+        for (int j = 0; j < 3; ++j) {
+            Eigen::Vector2d vertex = triangle.vertices.col(j);
+            Eigen::Vector2d normal = triangle.normals.col(j);
+            for (int i = 0; i < N; ++i) {
+                Eigen::Vector2d sample = samples.col(i);
+                Eigen::Vector2d diff = sample - vertex;
+                double dot = diff.dot(normal);
+                if (dot < 0) {
+                    inside_flags(i) = false;
+                }
+            }
+        }
+
+        if (inside_flags.any()) return true;
 
         // Check if any vertex of the triangle is inside the circle
         for (int j = 0; j < 3; ++j) {
