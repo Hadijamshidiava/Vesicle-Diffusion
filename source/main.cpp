@@ -20,11 +20,11 @@ int main()
     // }
 
     vesicles.create(20, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
-    vesicles.create(50, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
-    vesicles.create(50, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
-    vesicles.create(20, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
-    vesicles.create(40, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
     vesicles.create(30, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(40, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(50, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(60, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
+    vesicles.create(20, N_SAMPLES, DIFFUSION_COEFF, DT, cell, 50);
 
     // launch the rendering thread
     std::thread thread(&renderingThread, &window, &vesicles, &cell);

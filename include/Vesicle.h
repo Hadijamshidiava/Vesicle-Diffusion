@@ -60,7 +60,7 @@ public:
             }
         }
 
-        if(is_outside(moveDist)){
+        if(is_outside(moveDist,r)){
             return { false, oldOverlapped };
         }
 
@@ -188,7 +188,7 @@ public:
         }
     }
 
-    bool is_outside(Eigen::VectorXd& distances){
+    bool is_outside(Eigen::VectorXd& distances, int r){
         /**
          * Checks whether the vesicle is likely outside the cell boundary
          * based on the accumulated vector from surrounding triangle centers.
@@ -196,7 +196,7 @@ public:
          * distances: The accumulated vector from vesicle to nearby triangles.
          * @return True if the vesicle appears to be near the boundary or outside.
          */
-        if (distances.norm() > 100){
+        if (distances.norm() > 2*r){
             return true;
         }
         return false;
